@@ -29,6 +29,13 @@
         let painting = false
         let last
 
+        document.body.addEventListener(
+            "touchmove",
+            function (e) {
+                e.preventDefault(); //阻止默认的处理方式(阻止下拉滑动的效果)
+            },
+            { passive: false }
+        ); //passive 参数不能省略，用来兼容ios和android
         var isTouchDevice = 'ontouchstart' in document.documentElement;  //判断是手机还是pc。注：ontouchstart触屏事件//
 
         if (isTouchDevice) {                                             //如是触屏,那么尝试完成以下动作//
