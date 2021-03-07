@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>画板</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="canvas" width="100" height="100"></canvas>
+    <script>
+        let canvas = document.getElementById("canvas");
+        canvas.width = document.documentElement.clientWidth
+        canvas.height = document.documentElement.clientHeight
+        let ctx = canvas.getContext("2d");  //指定画布绘制类型。当前唯一合法值是"2d"指二维绘图，并返回一个环境对象导出一个二维绘图API//
+        ctx.fillStyle = "black";            //填充颜色//
+        ctx.strokeStyle = 'black'           //描边颜色//
+        ctx.lineWidth = 5;
+        ctx.lineCap = "round";              //设置或返回线条末端线帽的样式//
+        function drawLine(x1, y1, x2, y2) { //将两个点之间连线//
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+        let painting = false
+        let last
+
+        var isTouchDevice = 'ontouchstart' in document.documentElement;  //判断是手机还是pc。注：ontouchstart触屏事件//
+
+        if (isTouchDevice) {                                             //如是触屏,那么尝试完成以下动作//
+            canvas.ontouchstart = (e) => {
+                let x = e.touches[0].clientX                             //将触摸位置创建文档坐标//
+                let y = e.touches[0].clientY
+                last = [x, y]
+            }
+            canvas.ontouchmove = (e) => {
+                // console.log('TOUCH')
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                drawLine(last[0], last[1], x, y)
+                last = [x, y]
+            }
+        } else {
+            canvas.onmousedown = (e) => {
+                // console.log('hi')
+                painting = true
+                last = [e.clientX, e.clientY]
+                // console.log(last)
+            }
+            canvas.onmousemove = (e) => {
+                if (painting === true) {
+                    drawLine(last[0], last[1], e.clientX, e.clientY)
+                    last = [e.clientX, e.clientY]
+                    // ctx.beginPath();                       //启动一个路径分支//
+                    // ctx.arc(x, y, 5, 1, 2 * Math.PI);      //创建一个圆(起始位置x,起始位置y，半径，角度，圆周率) 注：PI就是圆周率π//
+                    // ctx.stroke();                          //绘制路径//
+                    // ctx.fill();                            //实心填充//
+                }
+                // else {
+                //     console.log('什么都不画')
+                // }
+            }
+            canvas.onmouseup = () => {
+                painting = false
+            }
+        }
+    </script>
+</body>
+
+</html>
